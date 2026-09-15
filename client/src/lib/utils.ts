@@ -1,0 +1,77 @@
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
+export function formatRelativeTime(dateString: string): string {
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffSeconds = Math.floor(diffMs / 1000);
+  const diffMinutes = Math.floor(diffSeconds / 60);
+  const diffHours = Math.floor(diffMinutes / 60);
+  const diffDays = Math.floor(diffHours / 24);
+
+  if (diffSeconds < 60) return 'just now';
+  if (diffMinutes < 60) return `${diffMinutes}m ago`;
+  if (diffHours < 24) return `${diffHours}h ago`;
+  if (diffDays < 7) return `${diffDays}d ago`;
+
+  return date.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: diffDays > 365 ? 'numeric' : undefined,
+  });
+}
+
+export function formatDateTime(dateString: string): string {
+  return new Date(dateString).toLocaleString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  });
+}
+
+export const CURSOR_COLORS = [
+  '#3DA0AA', // pacific blue   — brand teal, replaced indigo
+  '#8B5CF6', // violet         
+  '#EC4899', // pink           
+  '#F59E0B', // amber         
+  '#10B981', // emerald        
+  '#3B82F6', // blue           
+  '#55ABB1', // Tropical Teal  — replaces old teal #14B8A6
+  '#F97316', // orange         
+  '#EF4444', // rose           
+  '#84CC16', // lime           
+] as const;
+
+const ADJECTIVES = ['Aarav','Vihaan','Arjun','Kabir','Advait','Reyansh','Ishaan','Rohan','Karan','Aditya','Dhruv','Krishna','Aryan','Vivaan','Ansh'];
+
+const NOUNS = ['Sharma','Verma','Patel','Gupta','Reddy','Mehta','Singh','Nair','Iyer','Joshi','Rao','Kumar','Das','Shah','Mishra'];
+
+export function generateDisplayName(): string {
+  const adj  = ADJECTIVES[Math.floor(Math.random() * ADJECTIVES.length)];
+  const noun = NOUNS[Math.floor(Math.random() * NOUNS.length)];
+  return `${adj} ${noun}`;
+}
+
+export function getInitials(name: string): string {
+  return name
+    .split(' ')
+    .map((word) => word[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2);
+}
+
+export function getColorForId(id: string): string {
+  let hash = 0;
+  for (let i = 0; i < id.length; i++) {
+    hash = id.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  return CURSOR_COLORS[Math.abs(hash) % CURSOR_COLORS.length];
+}
