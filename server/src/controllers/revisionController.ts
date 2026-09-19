@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { revisionService } from '../services/revisionService';
+import { revisionService } from '../services/revisionService.js';
 
 export const revisionController = {
   async findAll(req: Request, res: Response, next: NextFunction): Promise<void> {

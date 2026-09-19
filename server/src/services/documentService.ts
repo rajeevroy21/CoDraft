@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
-import { DocumentModel, IDocument } from '../models/Document';
-import { createError } from '../middleware/errorHandler';
+import { DocumentModel, IDocument } from '../models/Document.js';
+import { createError } from '../middleware/errorHandler.js';
 
 
 

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { revisionController } from '../controllers/revisionController';
+import { revisionController } from '../controllers/revisionController.js';
 
 const router = Router();
 

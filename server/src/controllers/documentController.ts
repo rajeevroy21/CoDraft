@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import { documentService } from '../services/documentService';
-import { revisionService } from '../services/revisionService';
+import { documentService } from '../services/documentService.js';
+import { revisionService } from '../services/revisionService.js';
 
 
 export const documentController = {

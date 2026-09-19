@@ -1,6 +1,6 @@
 import * as Y from 'yjs';
-import { RevisionModel, IRevision } from '../models/Revision';
-import { DocumentModel } from '../models/Document';
+import { RevisionModel, IRevision } from '../models/Revision.js';
+import { DocumentModel } from '../models/Document.js';
 
 
 

@@ -1,10 +1,10 @@
 import http from 'http';
 import { WebSocketServer } from 'ws';
-import app from './app';
-import { connectDatabase } from './config/db';
-import { hocuspocus } from './websocket/hocuspocus';
-import { env } from './config/env';
-import { logger } from './utils/logger';
+import app from './app.js';
+import { connectDatabase } from './config/db.js';
+import { hocuspocus } from './websocket/hocuspocus.js';
+import { env } from './config/env.js';
+import { logger } from './utils/logger.js';
 
 async function bootstrap() {
   await connectDatabase();

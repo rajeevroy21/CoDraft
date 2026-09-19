@@ -1,9 +1,9 @@
 import express from 'express';
 import cors from 'cors';
-import { env } from './config/env';
-import documentRoutes from './routes/documents';
-import revisionRoutes from './routes/revisions';
-import { errorHandler } from './middleware/errorHandler';
+import { env } from './config/env.js';
+import documentRoutes from './routes/documents.js';
+import revisionRoutes from './routes/revisions.js';
+import { errorHandler } from './middleware/errorHandler.js';
 const app = express();
 app.use(cors({
   origin: [

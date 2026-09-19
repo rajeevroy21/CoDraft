@@ -1,8 +1,8 @@
 import { Server as HocuspocusServer } from '@hocuspocus/server';
 import { Database } from '@hocuspocus/extension-database';
-import { documentService } from '../services/documentService';
-import { revisionService } from '../services/revisionService';
-import { logger } from '../utils/logger';
+import { documentService } from '../services/documentService.js';
+import { revisionService } from '../services/revisionService.js';
+import { logger } from '../utils/logger.js';
 
 const revisionThrottle: Map<string, NodeJS.Timeout> = new Map();
 const REVISION_INTERVAL_MS = 30_000;
