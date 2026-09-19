@@ -25,6 +25,6 @@
     "@types/uuid": "^9.0.8",
     "@types/ws": "^8.18.1",
     "tsx": "^4.23.13",
-    "typescript": "^5.9.3"
+    "typescript": "^5.7.2"
   }
 }
