@@ -1,58 +1,74 @@
 # CoDraft
 
-CoDraft is a real-time collaborative text editor built for shared writing. Multiple users can open the same document, type at the same time, see each other's presence, and keep working without overwriting each other.
+**CoDraft** is a real-time collaborative text editor built for shared writing. Multiple users can open the same document, type simultaneously, see each other's presence and cursors, and collaborate without overwriting each other's changes.
 
- **Real-time Collaborative Text Editor** 
+## 🚀 Live Demo
 
-## live demo
+- **Frontend:** https://co-draft-eight.vercel.app/
+- **Backend:** https://codraft-2k92.onrender.com/health
+- **GitHub:** https://github.com/rajeevroy21/CoDraft
 
-- Live URL: [here!](https://CoDraft-zeta.vercel.app/)
-- GitHub: `https://github.com/rajeevroy21/CoDraft`
+---
 
-## what the project does
+## ✨ What the Project Does
 
-CoDraft focuses on one thing: making a shared document actually feel live.
+CoDraft focuses on making collaborative document editing feel truly real-time.
 
 Users can:
-- create and open documents
-- edit the same document from multiple browser windows
-- see presence indicators
-- see coloured collaborator cursors
-- use basic rich-text formatting
-- rely on document persistence
-- browse revision history
 
-This is a **shared workspace demo build**. Anyone with the document link can open it and collaborate. That choice was intentional for the hackathon build so the focus stayed on real-time editing, conflict-free sync, and product flow rather than authentication.
+- Create and open documents
+- Edit the same document from multiple browser windows
+- See collaborator presence indicators
+- See colored collaborator cursors
+- Use rich-text formatting
+- Persist documents
+- Browse revision history
+- Restore previous document revisions
+- Collaborate without manually resolving editing conflicts
 
-## requirement mapping
+> **Note:** CoDraft is currently a shared-workspace demo. Anyone with a document URL can open and edit it. Authentication and access control are intentionally outside the current scope.
 
-This project was built to match the required problem statement:
+---
 
-### Required features
-- Real-time synchronisation of text changes across multiple users
-- User presence indicators
-- Cursor position tracking per user
-- Conflict resolution when multiple users edit the same section
-- Basic text formatting: bold, italic, underline
-- Document persistence and revision history
+## 🎯 Requirement Mapping
 
-### Technical requirements
+### Required Features
+
+| Requirement | Implementation |
+|---|---|
+| Real-time synchronization | Yjs + Hocuspocus WebSocket |
+| User presence | Yjs Awareness |
+| Cursor tracking | Tiptap CollaborationCursor |
+| Conflict resolution | Yjs CRDT |
+| Text formatting | Tiptap |
+| Document persistence | MongoDB |
+| Revision history | MongoDB revision snapshots |
+| Revision restore | One-click restore |
+
+### Technical Requirements
+
 - WebSocket-based real-time communication
 - CRDT-based collaborative editing
 - Node.js backend
 - React frontend
-- MongoDB document storage
+- MongoDB persistence
 
-## Tech stack
+---
 
-### Frontend
+# 🛠 Tech Stack
+
+## Frontend
+
 - React
 - TypeScript
 - Vite
 - Tailwind CSS
 - Tiptap
+- Yjs
+- Hocuspocus Provider
 
-### Backend
+## Backend
+
 - Node.js
 - Express
 - TypeScript
@@ -61,125 +77,237 @@ This project was built to match the required problem statement:
 - MongoDB
 - Mongoose
 
-### Deployment
-- Frontend: Vercel
-- Backend: Railway
+## Deployment
 
-## Architecture overview
+- **Frontend:** Vercel
+- **Backend:** Render
+- **Database:** MongoDB Atlas
 
-The project has two main parts:
+---
 
-### 1. Client
-The client is a React app that renders the landing page, dashboard, and editor UI.
+# 🏗 Architecture Overview
 
-The editor uses **Tiptap** for rich-text editing and connects to the collaboration backend through a **Yjs/Hocuspocus** provider. Presence, cursors, and syncing are all driven from that collaboration connection.
+CoDraft consists of two primary applications.
 
-### 2. Server
-The server exposes:
-- REST endpoints for document and revision management
-- a Hocuspocus WebSocket server for collaborative editing
-- MongoDB persistence for documents and revision snapshots
+## 1. Client
 
-### Collaboration flow
-1. A user opens a document
-2. The client connects to the Hocuspocus WebSocket server
-3. Yjs manages shared document state as a CRDT
-4. Remote edits merge without manual conflict handling
-5. The server stores document state and revision history in MongoDB
+The React client provides:
 
-## Project structure
+- Landing page
+- Document dashboard
+- Collaborative editor
+- Presence indicators
+- Cursor sharing
+- Rich-text formatting
+- Revision history
+
+The editor uses **Tiptap** for rich-text editing and connects to the collaboration server through **Yjs + Hocuspocus**.
+
+## 2. Server
+
+The Node.js server provides:
+
+- REST APIs for documents
+- REST APIs for revisions
+- Hocuspocus WebSocket server
+- MongoDB persistence
+- Revision snapshot management
+
+---
+
+# 🔄 Collaboration Flow
+
+1. A user opens a document.
+2. The client connects to the Hocuspocus WebSocket server.
+3. Yjs creates and maintains the shared document state.
+4. Users make edits simultaneously.
+5. Yjs synchronizes changes between connected clients.
+6. CRDT operations merge concurrent changes without traditional last-write-wins conflicts.
+7. Hocuspocus manages the real-time collaboration connection.
+8. Document state is persisted to MongoDB.
+9. Revision snapshots are stored separately for history and restoration.
+
+---
+
+# 🧩 Architecture
 
 ```text
-CoDraft/
-├── client/    # React + Vite frontend
-└── server/    # Node.js + Hocuspocus + MongoDB backend
-```
-
-## Architecture
-```
 ┌─────────────────────────────────────────────────────────────┐
 │                         Browser                             │
-│  React + Tiptap + Yjs + HocuspocusProvider                  │
-└─────────────────────────┬───────────────────────────────────┘
-                          │ HTTP (REST API) + WebSocket
-┌─────────────────────────▼───────────────────────────────────┐
-│                    Node.js Server (PORT 3001)               │
 │                                                             │
-│  HTTP  →  Express (REST API: documents, revisions)          │
-│  WS    →  Hocuspocus (Yjs sync + presence awareness)        │
-└─────────────────────────┬───────────────────────────────────┘
-                          │ Mongoose
-┌─────────────────────────▼───────────────────────────────────┐
-│                        MongoDB                              │
-│  documents: { title, yjsState (Binary), timestamps }        │
-│  revisions: { documentId, yjsState, contentPreview }        │
+│   React + Tiptap + Yjs + HocuspocusProvider                │
+│                                                             │
+└─────────────────────────────┬───────────────────────────────┘
+                              │
+                    HTTPS / WebSocket
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                    Node.js Server                           │
+│                    Render Deployment                        │
+│                                                             │
+│  HTTP  → Express REST API                                  │
+│          - Documents                                       │
+│          - Revisions                                       │
+│                                                             │
+│  WS    → Hocuspocus                                        │
+│          - Yjs synchronization                             │
+│          - Presence / Awareness                            │
+│          - Collaborative editing                           │
+│                                                             │
+└─────────────────────────────┬───────────────────────────────┘
+                              │
+                           Mongoose
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                       MongoDB Atlas                         │
+│                                                             │
+│  documents:                                                 │
+│    - title                                                  │
+│    - yjsState                                               │
+│    - timestamps                                             │
+│                                                             │
+│  revisions:                                                 │
+│    - documentId                                             │
+│    - yjsState                                               │
+│    - contentPreview                                         │
+│    - timestamps                                             │
+│                                                             │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-## How it works
-The HTTP server and WebSocket server share one port. When a client connects via `ws://`, the Node.js `upgrade` event hands the socket to Hocuspocus. Regular HTTP requests go to Express as normal.
+---
 
-Yjs encodes document state as a binary CRDT. Hocuspocus loads it from MongoDB when the first user opens a document, and saves it back every 2 seconds of inactivity. Revision snapshots are written separately on a 30-second throttle.
+# 🧠 How It Works
+
+The HTTP API and WebSocket collaboration server run on the same backend service.
+
+Regular HTTP requests are handled by Express, while WebSocket connections are handled by Hocuspocus.
+
+Yjs represents the collaborative document as a binary CRDT state.
+
+When a user opens a document:
+
+```text
+Client
+  ↓
+Hocuspocus WebSocket
+  ↓
+Load document state
+  ↓
+Yjs CRDT
+  ↓
+Collaborative editing
+  ↓
+Persist state to MongoDB
+```
+
+Document state is persisted in MongoDB, while revision snapshots are maintained separately for revision history.
 
 ---
 
-### Why CRDTs
+# 🧮 Why CRDTs?
 
-This project uses **Yjs**, a CRDT library, instead of writing custom merge logic.
-Collaborative editing becomes complex quickly when multiple users edit the same content simultaneously. A CRDT-based model ensures a consistent shared state without forcing users to manually resolve conflicts.
+Collaborative editing becomes difficult when multiple users modify the same document simultaneously.
+
+A traditional **Last Writer Wins (LWW)** approach can cause one user's changes to overwrite another user's changes.
+
+### The Problem
+
+Imagine two users editing the same sentence:
+
+```text
+User A → "Hello world!"
+User B → "Hello CoDraft!"
+```
+
+With a simple last-write-wins system, one update could replace the other.
+
+This can lead to:
+
+- Data loss
+- Lost user intent
+- Race conditions
+- Poor collaborative UX
+
+### The Solution
+
+CoDraft uses **Yjs**, a CRDT implementation designed for collaborative applications.
+
+Yjs allows concurrent updates to be merged into a consistent shared state without requiring users to manually resolve ordinary concurrent editing conflicts.
 
 ---
 
-### The Problem: "Last Writer Wins" (LWW)
-In most basic collaborative tools, if two users edit the same sentence simultaneously, the person who saves last overwrites the other.
-Data Loss: Edits are simply discarded based on timestamp.
-Poor UX: Users must wait for "turns" to avoid overwriting each other.
+# 📁 Project Structure
 
-##### CoDraft treats this as a distributed systems challenge rather than a simple database update.
-
-### The Solution: CRDT Math
-CoDraft implements Conflict-free Replicated Data Types (CRDTs) to ensure that every user's intent is preserved, regardless of network latency or sync order.
+```text
+CoDraft/
+├── client/
+│   ├── src/
+│   ├── public/
+│   ├── package.json
+│   ├── vercel.json
+│   └── vite.config.ts
+│
+└── server/
+    ├── src/
+    ├── package.json
+    ├── tsconfig.json
+    └── ...
+```
 
 ---
 
-###  Repository Links
-
-- Main repo: https://github.com/rajeevroy21/CoDraft 
-
-## Stack
+# 📚 Stack
 
 | Layer | Technology |
 |---|---|
-| Editor | Tiptap v2 |
+| Editor | Tiptap |
 | CRDT | Yjs |
 | WebSocket | Hocuspocus |
-| Frontend | React + Vite + TypeScript + Tailwind CSS |
+| Frontend | React + Vite + TypeScript |
+| Styling | Tailwind CSS |
 | Backend | Node.js + Express |
 | Database | MongoDB + Mongoose |
+| Frontend Deployment | Vercel |
+| Backend Deployment | Render |
 
 ---
 
-## Local setup
+# 💻 Local Setup
 
-#### Prerequisites
+## Prerequisites
+
 - Node.js 20+
 - npm
-- MongoDB Atlas connection string
+- MongoDB Atlas account or local MongoDB
 
-## Run it locally
+## Clone the Repository
 
-You need Node.js 18+ and a MongoDB connection string (local or Atlas free tier).
 ```bash
-git clone https://github.com/rajeevroy21/CoDraft
+git clone https://github.com/rajeevroy21/CoDraft.git
 cd CoDraft
-
-cd server && npm install
-cd ../client && npm install
 ```
 
-Create `server/.env`:
+---
 
+## Backend Setup
+
+```bash
+cd server
+npm install
 ```
+
+Create:
+
+```text
+server/.env
+```
+
+Add:
+
+```env
 PORT=3001
 MONGODB_URI=<your_mongodb_connection_string>
 CLIENT_URL=http://localhost:5173
@@ -187,94 +315,245 @@ NODE_ENV=development
 ```
 
 Run the backend:
-```
-npm install
-npm build dev
+
+```bash
 npm run dev
 ```
-#### Setup the frontend
+
+The backend will run on:
+
+```text
+http://localhost:3001
+```
+
+---
+
+## Frontend Setup
 
 Open another terminal:
 
-```
+```bash
 cd client
 npm install
 ```
 
-Create `client/.env`:
+Create:
 
+```text
+client/.env
 ```
+
+Add:
+
+```env
 VITE_API_URL=http://localhost:3001
 VITE_WS_URL=ws://localhost:3001
 ```
 
 Run the frontend:
-```
+
+```bash
 npm run dev
 ```
-The frontend should run on `http://localhost:5173`.
 
-## Deploy
+The frontend will normally be available at:
 
-### Backend — Railway
-
-1. New project → deploy from GitHub → set root directory to `server`
-2. Build command: `npm install && npm run build`
-3. Start command: `npm start`
-4. Add environment variables: `MONGODB_URI`, `CLIENT_URL`, `NODE_ENV=production`
-5. Railway sets `PORT` automatically
-
-### Frontend — Vercel
-
-1. Import repo → set root directory to `client`
-2. Framework preset: Vite
-3. Add environment variables:
-   - `VITE_API_URL` = your Railway URL
-   - `VITE_WS_URL` = your Railway URL with `wss://` prefix
+```text
+http://localhost:5173
+```
 
 ---
 
-## Shared workspace model
+# 🌐 Production Environment Variables
 
-Every document is accessible to anyone with its URL. There are no accounts, no access control, and no ownership. This is intentional — the project is about real-time collaboration, not authentication. Anyone who has the link can open the document and start editing immediately.
+## Frontend — Vercel
+
+The production frontend uses:
+
+```env
+VITE_API_URL=https://codraft-2k92.onrender.com
+VITE_WS_URL=wss://codraft-2k92.onrender.com
+```
+
+The `wss://` protocol is used because the production frontend is served over HTTPS.
+
+## Backend — Render
+
+The backend uses environment variables similar to:
+
+```env
+MONGODB_URI=<your_mongodb_connection_string>
+CLIENT_URL=https://co-draft-eight.vercel.app
+NODE_ENV=production
+```
+
+Render provides the production `PORT` automatically.
 
 ---
 
-## Known limitations
+# 🚀 Deployment
 
-- No authentication. Any URL is publicly editable.
-- Revision restore requires a page reload to reflect the restored state.
-- The free Railway tier sleeps after inactivity. The first request after sleep takes ~5 seconds.
-- Mobile layout works but the editor toolbar is compact on small screens.
+## Backend — Render
+
+The backend is deployed on Render.
+
+### Configuration
+
+**Root Directory**
+
+```text
+server
+```
+
+**Build Command**
+
+```bash
+npm install --include=dev && npm run build
+```
+
+**Start Command**
+
+```bash
+npm start
+```
+
+### Environment Variables
+
+```env
+MONGODB_URI=<your_mongodb_connection_string>
+CLIENT_URL=https://co-draft-eight.vercel.app
+NODE_ENV=production
+```
+
+### Backend URL
+
+```text
+https://codraft-2k92.onrender.com
+```
+
+Health check:
+
+```text
+https://codraft-2k92.onrender.com/health
+```
 
 ---
 
-## AI tools used
-- ChatGPT  
-- Claude  
-#### Claude (Anthropic) was used for architectural guidance, debugging. All integration decisions, design choices, and final implementation were verified and adjusted manually.
+# ▲ Frontend — Vercel
+
+The frontend is deployed using Vercel.
+
+### Configuration
+
+**Root Directory**
+
+```text
+client
+```
+
+**Framework**
+
+```text
+Vite
+```
+
+**Build Command**
+
+```bash
+npm run build
+```
+
+**Output Directory**
+
+```text
+dist
+```
+
+**Install Command**
+
+```bash
+npm install
+```
+
+### Environment Variables
+
+```env
+VITE_API_URL=https://codraft-2k92.onrender.com
+VITE_WS_URL=wss://codraft-2k92.onrender.com
+```
+
+### Production URL
+
+```text
+https://co-draft-eight.vercel.app/
+```
 
 ---
 
-## Scoring rubric alignment
+# 🔗 Repository Links
+
+- **Live Application:** https://co-draft-eight.vercel.app/
+- **Backend Health:** https://codraft-2k92.onrender.com/health
+- **GitHub Repository:** https://github.com/rajeevroy21/CoDraft
+
+---
+
+# 👥 Shared Workspace Model
+
+Every document is currently accessible to anyone who has its URL.
+
+There are currently:
+
+- No user accounts
+- No authentication
+- No document ownership
+- No access-control system
+
+This is intentional for the current collaborative-editor implementation. The focus is on real-time synchronization, CRDT-based conflict resolution, persistence, and revision management.
+
+---
+
+# ⚠️ Known Limitations
+
+- No authentication or authorization
+- Anyone with a document URL can edit it
+- Revision restore may require a page reload to fully reflect the restored state
+- Render's free infrastructure may experience cold starts after inactivity
+- Mobile editor layout is functional but the toolbar is compact on smaller screens
+
+---
+
+# 🤖 AI Tools Used
+
+- ChatGPT
+- Claude
+
+Claude was used for architectural guidance and debugging. ChatGPT was used for development assistance, debugging, and implementation guidance.
+
+All integration decisions, design choices, and final implementation were reviewed and adjusted manually.
+
+---
+
+# 📊 Scoring Rubric Alignment
 
 | Criterion | Implementation |
 |---|---|
-| Real-time sync | Yjs + Hocuspocus WebSocket, character-by-character |
-| Conflict resolution | Yjs CRDT — deterministic merge, no overwrite |
-| Presence indicators | Awareness protocol, coloured cursors, name labels |
-| Cursor tracking | CollaborationCursor extension, per-user colour |
-| Formatting | Bold, italic, underline, headings, lists, code |
-| Persistence | MongoDB, yjsState binary field |
-| Revision history | 30-second snapshots, panel UI, one-click restore |
-| WebSocket | Single-port HTTP upgrade, Hocuspocus protocol |
+| Real-time synchronization | Yjs + Hocuspocus WebSocket |
+| Conflict resolution | Yjs CRDT |
+| Presence indicators | Yjs Awareness |
+| Cursor tracking | Tiptap CollaborationCursor |
+| Rich-text formatting | Bold, italic, underline, headings, lists, code |
+| Persistence | MongoDB + Yjs binary state |
+| Revision history | Periodic revision snapshots |
+| Revision restore | Revision panel + restore functionality |
+| WebSocket communication | Hocuspocus WebSocket server |
+| Backend | Node.js + Express |
+| Frontend | React + Vite + TypeScript |
 
+---
 
+# 📄 License
 
+Released under the **MIT License**.
 
-
-## License
-
-Released under the **MIT License**. See [LICENSE](./LICENSE).
-
-
+See [LICENSE](./LICENSE).
